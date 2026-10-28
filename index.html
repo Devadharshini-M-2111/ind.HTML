@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Courier Parcel Delivery Route Optimization System</title>
+<style>
+:root{--bg:#07111f;--panel:#101f33;--panel2:#152941;--text:#eaf2ff;--muted:#9eb1cb;--cyan:#53e0d0;--blue:#6ea8fe;--orange:#ffbd69;--red:#ff6b81;--green:#54d6a0}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 15% 0%,#18345a 0,transparent 34%),var(--bg);color:var(--text);line-height:1.55}
+header{padding:34px 5vw 28px;border-bottom:1px solid #29415f;background:#07111fd9;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:2px;font-size:.75rem;font-weight:800}.hero{display:flex;justify-content:space-between;align-items:center;gap:25px;flex-wrap:wrap}h1{font-size:clamp(1.8rem,4vw,3.3rem);line-height:1.12;margin:10px 0;max-width:850px}header p{margin:0;color:var(--muted)}.tag{border:1px solid #386078;border-radius:999px;padding:8px 14px;color:var(--cyan);font-size:.85rem}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}nav a{color:#d6e4fa;text-decoration:none;border:1px solid #2b405a;padding:7px 11px;border-radius:8px;font-size:.82rem}nav a:hover{border-color:var(--cyan);color:var(--cyan)}
+main{width:min(1200px,92vw);margin:30px auto 70px}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{background:linear-gradient(145deg,#13243a,#0e1a2b);border:1px solid #263d59;border-radius:18px;padding:22px;box-shadow:0 14px 35px #0002}.span12{grid-column:span 12}.span8{grid-column:span 8}.span6{grid-column:span 6}.span4{grid-column:span 4}h2{margin:0 0 13px;font-size:1.35rem}h3{color:var(--cyan);margin:18px 0 8px;font-size:1rem}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#0a1727;border:1px solid #263d59;border-radius:13px;padding:17px}.stat strong{display:block;font-size:1.75rem;color:var(--cyan)}.stat span{font-size:.82rem;color:var(--muted)}.pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:.75rem;font-weight:800}.urgent{background:#4b1e32;color:#ff9bb0}.high{background:#493719;color:#ffd28b}.normal{background:#123e36;color:#83f0c2}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:10px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #273b53}th{color:var(--muted);font-weight:600}tr:last-child td{border-bottom:0}.route{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.node{background:#172e47;border:1px solid #365575;border-radius:8px;padding:5px 9px;font-size:.82rem}.arrow{color:var(--cyan)}
+button{cursor:pointer;border:0;border-radius:10px;background:var(--cyan);color:#06131e;font-weight:800;padding:11px 15px}button.secondary{background:#203650;color:var(--text);border:1px solid #3a5675}input,select{background:#081525;color:var(--text);border:1px solid #34506e;border-radius:9px;padding:10px;width:100%;margin:5px 0 12px}label{font-size:.85rem;color:var(--muted)}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.output{background:#071321;border:1px solid #2b4766;border-radius:12px;padding:16px;min-height:80px;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;font-size:.87rem}.code{background:#071321;border:1px solid #2b4766;border-radius:12px;padding:16px;overflow:auto;color:#cde4ff;font: .84rem/1.6 ui-monospace,Consolas,monospace;white-space:pre}.note{border-left:3px solid var(--orange);padding:10px 14px;background:#2a241b;border-radius:0 8px 8px 0;color:#f5d8ac}.bar{height:9px;background:#263a52;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:99px}footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid #263d59}
+@media(max-width:800px){.span8,.span6,.span4{grid-column:span 12}.stats{grid-template-columns:repeat(2,1fr)}.controls{grid-template-columns:repeat(2,1fr)}header{position:static}}@media(max-width:480px){.controls{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <div><div class="eyebrow">Design & Analysis of Algorithms · Course Project</div>
+      <h1>Courier Parcel Delivery<br>Route Optimization System</h1>
+      <p>Priority dispatch · Graph-based shortest paths · Delivery analytics</p>
+    </div>
+    <div class="tag">PROJECT DASHBOARD</div>
+  </div>
+  <nav>
+    <a href="#overview">Overview</a><a href="#network">Road Network</a><a href="#dispatch">Dispatch</a><a href="#simulator">Try Simulator</a><a href="#algorithm">Algorithm</a><a href="#analysis">Complexity</a><a href="#tests">Test Cases</a><a href="#limits">Future Work</a>
+  </nav>
+</header>
+<main>
+<section class="grid" id="overview">
+  <div class="card span12">
+    <h2>Project Overview</h2>
+    <p>This project models a city road network as a weighted, undirected graph. Parcels are sorted by priority—URGENT, HIGH, then NORMAL—and Dijkstra’s algorithm finds a shortest route from the Warehouse to each destination. Estimated time assumes a constant speed of 30 km/h.</p>
+    <div class="stats">
+      <div class="stat"><strong>7</strong><span>Locations (vertices)</span></div>
+      <div class="stat"><strong>12</strong><span>Roads (edges)</span></div>
+      <div class="stat"><strong>4</strong><span>Sample parcels</span></div>
+      <div class="stat"><strong>38 km</strong><span>Sum of independent routes</span></div>
+    </div>
+  </div>
+  <div class="card span8">
+    <h2>Project Details</h2>
+    <table><tbody>
+      <tr><td class="muted">Student</td><td><strong>DEVADHARSHINI M</strong></td></tr>
+      <tr><td class="muted">Register Number</td><td><strong>711525BCS023</strong></td></tr>
+      <tr><td class="muted">Course</td><td>Design and Analysis of Algorithms</td></tr>
+      <tr><td class="muted">Implementation</td><td>Python 3 · heapq · adjacency list</td></tr>
+      <tr><td class="muted">Core algorithms</td><td>Stable priority sort + Dijkstra’s shortest path</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card span4">
+    <h2>Delivery Summary</h2>
+    <p class="muted">Estimated at 30 km/h, excluding traffic and service time.</p>
+    <div style="display:flex;justify-content:space-between"><span>Total time</span><strong style="color:var(--cyan)">76 min</strong></div><div class="bar"><span style="width:84%"></span></div>
+    <div style="display:flex;justify-content:space-between;margin-top:15px"><span>Parcels processed</span><strong>4 / 4</strong></div><div class="bar"><span style="width:100%"></span></div>
+    <div style="display:flex;justify-content:space-between;margin-top:15px"><span>Agents</span><strong>2</strong></div><div class="bar"><span style="width:50%"></span></div>
+  </div>
+</section>
+
+<section class="grid" id="network" style="margin-top:18px">
+  <div class="card span12">
+    <h2>Road Network</h2>
+    <p class="muted">Illustrative network from the report. Road labels show distance in kilometres. The graph is undirected.</p>
+    <div style="overflow-x:auto">
+    <svg viewBox="0 0 900 340" width="100%" role="img" aria-label="Road network diagram with seven locations and weighted roads" style="min-width:650px">
+      <g stroke="#42617f" stroke-width="3" fill="none">
+        <line x1="90" y1="165" x2="260" y2="75"/><line x1="90" y1="165" x2="270" y2="255"/><line x1="90" y1="165" x2="450" y2="165"/>
+        <line x1="260" y1="75" x2="450" y2="165"/><line x1="270" y1="255" x2="450" y2="165"/><line x1="450" y1="165" x2="640" y2="75"/>
+        <line x1="450" y1="165" x2="640" y2="255"/><line x1="640" y1="75" x2="800" y2="165"/><line x1="640" y1="255" x2="800" y2="165"/>
+        <line x1="270" y1="255" x2="640" y2="255"/><line x1="260" y1="75" x2="640" y2="75"/><line x1="450" y1="165" x2="800" y2="165"/>
+      </g>
+      <g fill="#ffbd69" font-size="15" font-weight="700">
+        <text x="160" y="105">6</text><text x="165" y="230">4</text><text x="260" y="155">7</text><text x="350" y="105">4</text><text x="350" y="230">5</text><text x="540" y="105">5</text><text x="540" y="230">5</text><text x="715" y="105">6</text><text x="715" y="230">5</text><text x="450" y="285">8</text><text x="450" y="60">9</text><text x="625" y="150">7</text>
+      </g>
+      <g fill="#132a43" stroke="#53e0d0" stroke-width="3">
+        <circle cx="90" cy="165" r="35"/><circle cx="260" cy="75" r="31"/><circle cx="270" cy="255" r="31"/><circle cx="450" cy="165" r="31"/><circle cx="640" cy="75" r="31"/><circle cx="640" cy="255" r="31"/><circle cx="800" cy="165" r="31"/>
+      </g>
+      <g fill="#eaf2ff" text-anchor="middle" font-size="11" font-weight="700">
+        <text x="90" y="161">WARE-</text><text x="90" y="175">HOUSE</text><text x="260" y="72">NORTH</text><text x="260" y="85">STREET</text><text x="270" y="252">EAST</text><text x="270" y="265">MARKET</text><text x="450" y="162">CITY</text><text x="450" y="175">CENTER</text><text x="640" y="72">RAILWAY</text><text x="640" y="85">STATION</text><text x="640" y="252">LAKE</text><text x="640" y="265">VIEW</text><text x="800" y="162">HOSPI-</text><text x="800" y="175">TAL</text>
+      </g>
+    </svg></div>
+    <p class="note">The report confirms the sample network has 7 locations and 12 roads. The diagram is a visual schematic; use the exact road list in your Python implementation as the source of truth.</p>
+  </div>
+</section>
+
+<section class="grid" id="dispatch" style="margin-top:18px">
+  <div class="card span12">
+    <h2>Priority Dispatch Queue</h2>
+    <p class="muted">Parcels are displayed in priority order. Times and routes match the sample results in the report.</p>
+    <table><thead><tr><th>Order</th><th>Parcel ID</th><th>Destination</th><th>Priority</th><th>Agent</th><th>Distance</th><th>Est. Time</th></tr></thead>
+    <tbody>
+      <tr><td>01</td><td>CP101</td><td>Hospital</td><td><span class="pill urgent">URGENT</span></td><td>Agent A</td><td>10 km</td><td>20 min</td></tr>
+      <tr><td>02</td><td>CP103</td><td>Lake View</td><td><span class="pill high">HIGH</span></td><td>Agent A</td><td>15 km</td><td>30 min</td></tr>
+      <tr><td>03</td><td>CP102</td><td>North Street</td><td><span class="pill normal">NORMAL</span></td><td>Agent B</td><td>6 km</td><td>12 min</td></tr>
+      <tr><td>04</td><td>CP104</td><td>East Market</td><td><span class="pill normal">NORMAL</span></td><td>Agent B</td><td>7 km</td><td>14 min</td></tr>
+    </tbody></table>
+    <h3>Computed routes</h3>
+    <div style="display:grid;gap:12px">
+      <div><strong>CP101 · Hospital</strong><div class="route"><span class="node">Warehouse</span><span class="arrow">→</span><span class="node">North Street</span><span class="arrow">→</span><span class="node">Hospital</span><span class="muted">10 km · 20 min</span></div></div>
+      <div><strong>CP103 · Lake View</strong><div class="route"><span class="node">Warehouse</span><span class="arrow">→</span><span class="node">City Center</span><span class="arrow">→</span><span class="node">Railway Station</span><span class="arrow">→</span><span class="node">Lake View</span><span class="muted">15 km · 30 min</span></div></div>
+      <div><strong>CP102 · North Street</strong><div class="route"><span class="node">Warehouse</span><span class="arrow">→</span><span class="node">North Street</span><span class="muted">6 km · 12 min</span></div></div>
+      <div><strong>CP104 · East Market</strong><div class="route"><span class="node">Warehouse</span><span class="arrow">→</span><span class="node">East Market</span><span class="muted">7 km · 14 min</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="grid" id="simulator" style="margin-top:18px">
+  <div class="card span6">
+    <h2>Interactive Route Simulator</h2>
+    <p class="muted">Choose a destination to view the report’s sample route and estimated travel time.</p>
+    <label for="dest">Destination</label>
+    <select id="dest">
+      <option value="Hospital">Hospital</option><option value="Lake View">Lake View</option><option value="North Street">North Street</option><option value="East Market">East Market</option>
+    </select>
+    <label for="speed">Average speed (km/h)</label><input id="speed" type="number" min="1" max="150" value="30">
+    <button onclick="calculateRoute()">Calculate route</button>
+    <button class="secondary" onclick="window.print()">Print / Save PDF</button>
+  </div>
+  <div class="card span6">
+    <h2>Simulation Result</h2>
+    <div id="simResult" class="output" aria-live="polite">Select a destination and click “Calculate route”.</div>
+  </div>
+</section>
+
+<section class="grid" id="algorithm" style="margin-top:18px">
+  <div class="card span6">
+    <h2>Algorithm Workflow</h2>
+    <ol>
+      <li>Represent each location as a vertex and each road as a weighted edge.</li>
+      <li>Sort parcels by priority: URGENT → HIGH → NORMAL.</li>
+      <li>Run Dijkstra’s algorithm from the Warehouse to the destination.</li>
+      <li>Reconstruct the path using predecessor links.</li>
+      <li>Estimate time: <strong>distance ÷ speed × 60</strong>.</li>
+      <li>Display parcel routes and summary totals.</li>
+    </ol>
+  </div>
+  <div class="card span6">
+    <h2>Dijkstra Pseudocode</h2>
+    <pre class="code">DIJKSTRA(G, source, target)
+  for each vertex v:
+      dist[v] = infinity
+  dist[source] = 0
+  Q = min-heap with (0, source)
+
+  while Q is not empty:
+      (d, u) = extract-min(Q)
+      if d != dist[u]: continue
+      if u == target: break
+      for each edge (u, v, w):
+          if d + w < dist[v]:
+              dist[v] = d + w
+              prev[v] = u
+              push(Q, (dist[v], v))
+
+  return reconstructed path, dist[target]</pre>
+  </div>
+</section>
+
+<section class="grid" id="analysis" style="margin-top:18px">
+  <div class="card span6">
+    <h2>Complexity Analysis</h2>
+    <table><thead><tr><th>Component</th><th>Time</th><th>Space</th></tr></thead><tbody>
+      <tr><td>Priority sorting</td><td>O(n log n)</td><td>O(n)</td></tr>
+      <tr><td>Dijkstra (binary heap)</td><td>O((V + E) log V)</td><td>O(V + E)</td></tr>
+      <tr><td>Full implemented system</td><td>O(n log n + n(V + E) log V)</td><td>O(V + E + n)</td></tr>
+      <tr><td>Recommended: one Dijkstra run for all destinations</td><td>O(n log n + (V + E) log V)</td><td>O(V + E + n)</td></tr>
+    </tbody></table>
+  </div>
+  <div class="card span6">
+    <h2>Algorithm Landscape</h2>
+    <table><thead><tr><th>Technique</th><th>Use in the project</th></tr></thead><tbody>
+      <tr><td>Merge Sort / Binary Search</td><td>Sorting and lookup (proposed)</td></tr>
+      <tr><td>Greedy</td><td>Priority dispatch, activity selection</td></tr>
+      <tr><td>Dynamic Programming</td><td>0/1 Knapsack, Held–Karp TSP</td></tr>
+      <tr><td>Graph Algorithms</td><td>Dijkstra, BFS, DFS, MST, Floyd–Warshall</td></tr>
+      <tr><td>Backtracking / Branch & Bound</td><td>Exact multi-stop routing for smaller cases</td></tr>
+      <tr><td>Approximation</td><td>MST-doubling for metric TSP (≤ 2 × OPT)</td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<section class="grid" id="tests" style="margin-top:18px">
+  <div class="card span12">
+    <h2>Results & Test Cases</h2>
+    <table><thead><tr><th>Test</th><th>Scenario</th><th>Expected result</th><th>Status</th></tr></thead><tbody>
+      <tr><td>TC1</td><td>Warehouse → Hospital</td><td>10 km, 20 min</td><td style="color:var(--green)">PASS</td></tr>
+      <tr><td>TC2</td><td>Warehouse → Lake View</td><td>15 km, 30 min</td><td style="color:var(--green)">PASS</td></tr>
+      <tr><td>TC3</td><td>Warehouse → North Street</td><td>6 km, 12 min</td><td style="color:var(--green)">PASS</td></tr>
+      <tr><td>TC4</td><td>Warehouse → East Market</td><td>7 km, 14 min</td><td style="color:var(--green)">PASS</td></tr>
+      <tr><td>TC5</td><td>All four parcels</td><td>Priority order correct; 38 km, 76 min</td><td style="color:var(--green)">PASS</td></tr>
+      <tr><td>TC6</td><td>Unknown / unreachable destination</td><td>“No route found” handled safely</td><td style="color:var(--green)">PASS</td></tr>
+    </tbody></table>
+    <p class="note">The 38 km and 76 minute totals are sums of separate Warehouse-to-destination routes, not a combined multi-stop tour for each agent.</p>
+  </div>
+</section>
+
+<section class="grid" id="limits" style="margin-top:18px">
+  <div class="card span6">
+    <h2>Advantages</h2>
+    <ul><li>Finds optimal shortest paths for non-negative road distances.</li><li>Urgent parcels appear first in the dispatch queue.</li><li>Uses efficient graph structures and a min-heap.</li><li>Clear route and delivery-time summaries.</li></ul>
+  </div>
+  <div class="card span6">
+    <h2>Limitations</h2>
+    <ul><li>Each parcel is routed independently from the Warehouse.</li><li>Agent assignment is hard-coded.</li><li>Vehicle capacity and deadlines are not checked.</li><li>Assumes fixed speed and ignores traffic and service time.</li><li>Sample network is small and illustrative.</li></ul>
+  </div>
+  <div class="card span12">
+    <h2>Future Enhancements</h2>
+    <div class="grid">
+      <div class="span4"><h3>01 · Smarter computation</h3><p class="muted">Run Dijkstra once for all destinations; add Floyd–Warshall for repeated queries.</p></div>
+      <div class="span4"><h3>02 · Capacity & deadlines</h3><p class="muted">Include parcel weights, vehicle capacity, deadlines and knapsack-based selection.</p></div>
+      <div class="span4"><h3>03 · Multi-stop routing</h3><p class="muted">Assign parcels automatically and build agent tours with exact or approximation methods.</p></div>
+    </div>
+  </div>
+  <div class="card span12">
+    <h2>Conclusion</h2>
+    <p>The project demonstrates priority-based parcel dispatch and Dijkstra shortest-path routing on a weighted graph. The sample results are 10 km to the Hospital, 15 km to Lake View, 6 km to North Street and 7 km to East Market. The report’s main next step is to combine individual routes into capacity- and deadline-aware multi-stop tours, a more complex vehicle-routing problem.</p>
+  </div>
+  <div class="card span12">
+    <h2>References</h2>
+    <ol class="muted">
+      <li>Cormen, Leiserson, Rivest & Stein, <em>Introduction to Algorithms</em>, 4th ed., MIT Press, 2022.</li>
+      <li>Levitin, <em>Introduction to the Design and Analysis of Algorithms</em>, 3rd ed., Pearson, 2012.</li>
+      <li>Kleinberg & Tardos, <em>Algorithm Design</em>, Pearson, 2006.</li>
+      <li>Dijkstra, “A note on two problems in connexion with graphs,” <em>Numerische Mathematik</em>, 1959.</li>
+      <li>Python Software Foundation, <em>heapq – Heap queue algorithm</em>, Python 3 documentation.</li>
+    </ol>
+  </div>
+</section>
+</main>
+<footer>Courier Parcel Delivery Route Optimization System · DAA Course Project</footer>
+<script>
+const routes = {
+  "Hospital": {path:["Warehouse","North Street","Hospital"], distance:10, parcel:"CP101", priority:"URGENT", agent:"Agent A"},
+  "Lake View": {path:["Warehouse","City Center","Railway Station","Lake View"], distance:15, parcel:"CP103", priority:"HIGH", agent:"Agent A"},
+  "North Street": {path:["Warehouse","North Street"], distance:6, parcel:"CP102", priority:"NORMAL", agent:"Agent B"},
+  "East Market": {path:["Warehouse","East Market"], distance:7, parcel:"CP104", priority:"NORMAL", agent:"Agent B"}
+};
+function calculateRoute(){
+  const dest=document.getElementById("dest").value;
+  const speed=Number(document.getElementById("speed").value);
+  const out=document.getElementById("simResult");
+  if(!Number.isFinite(speed)||speed<=0){out.textContent="Please enter a valid speed greater than 0 km/h.";return;}
+  const r=routes[dest], mins=Math.round(r.distance/speed*60);
+  out.textContent=`PARCEL: ${r.parcel}\nDESTINATION: ${dest}\nPRIORITY: ${r.priority}\nAGENT: ${r.agent}\n\nSHORTEST ROUTE\n${r.path.join("  →  ")}\n\nDISTANCE: ${r.distance} km\nESTIMATED TIME: ${mins} minutes\nASSUMED SPEED: ${speed} km/h`;
+}
+calculateRoute();
+</script>
+</body>
+</html>
